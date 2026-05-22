@@ -1,0 +1,16 @@
+{
+  "name": "Resíduos AI · Cooperativa",
+  "short_name": "Resíduos AI",
+  "description": "Painel de gestão da cooperativa: turno ao vivo, certificados ESG, cotação.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#10b981",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

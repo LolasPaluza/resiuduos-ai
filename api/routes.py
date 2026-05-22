@@ -41,6 +41,23 @@ def criar_app(
     app = Flask(__name__)
     proteger = requer_token(token_gestor)
 
+    # CORS minimalista para o dashboard web (Next.js em outro host).
+    # Permite qualquer origem em rotas publicas e nas autenticadas; o token
+    # Bearer continua sendo a unica protecao real.
+    @app.after_request
+    def _cors(resp):
+        origem = request.headers.get("Origin", "*")
+        resp.headers["Access-Control-Allow-Origin"] = origem
+        resp.headers["Access-Control-Allow-Credentials"] = "true"
+        resp.headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type"
+        resp.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+        return resp
+
+    @app.route("/<path:_>", methods=["OPTIONS"])
+    @app.route("/", methods=["OPTIONS"])
+    def _cors_preflight(_=None):
+        return ("", 204)
+
     pasta_relatorios = pasta_relatorios or Path("dados/relatorios")
     pasta_certificados = pasta_certificados or Path("dados/certificados")
     pasta_dados = pasta_dados or Path("dados")
