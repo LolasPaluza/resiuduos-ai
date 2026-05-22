@@ -1,0 +1,60 @@
+# Ambientes Python
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Dados pesados/efemeros — NAO versionar
+dados/datasets/
+dados/modelos/runs/
+dados/modelos/yolov8n.pt
+dados/modelos/*.onnx
+dados/logs/
+dados/db/
+dados/relatorios/*.json
+dados/relatorios/*.pdf
+dados/relatorios/turno_*.json
+dados/certificados/CERT-*.pdf
+dados/certificados/CERT-*.json
+dados/frames/**/*.jpg
+dados/frames/**/*.png
+dados/frames/**/*.txt
+!dados/**/.gitkeep
+
+# IMPORTANTE: o modelo treinado yolov8n_residuos.pt FICA versionado
+# para quem clonar o repo conseguir rodar sem retreinar.
+
+# Artefatos de treino
+runs/
+treino*.log
+treino*.err
+smoke.out
+smoke.err
+*.log
+!*.gitkeep
+
+# Consentimento (gerado por instalacao especifica de cada cooperativa)
+dados/CONSENTIMENTO.txt
+
+# Web (Next.js) — sera criado depois
+web/node_modules/
+web/.next/
+web/out/
+web/.env.local
+web/.env*.local
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Arquivos temporarios
+*.tmp
+*.bak
+*~

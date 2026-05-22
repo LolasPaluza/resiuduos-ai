@@ -1,0 +1,83 @@
+cooperativa:
+  nome: ""
+  cidade: ""
+  estado: ""
+  cnpj: ""
+  responsavel: ""
+
+camera:
+  indice: 0
+  resolucao: [640, 480]
+  fps_alvo: 10
+
+modelo:
+  caminho: dados/modelos/yolov8n.pt
+  caminho_base: dados/modelos/yolov8n.pt
+  confianca_minima: 0.50
+  iou_threshold: 0.45
+  usar_onnx: false
+  caminho_onnx: dados/modelos/yolov8n_residuos.onnx
+
+turno:
+  duracao_horas: 8
+  alerta_contaminacao_pct: 10
+  salvar_intervalo_min: 5
+  peso_medio_kg:
+    PET: 0.040
+    PEAD: 0.060
+    papel: 0.100
+    metal: 0.030
+    organico: 0.200
+    rejeito: 0.150
+
+relatorio:
+  email_destino: ""
+  smtp_servidor: ""
+  smtp_porta: 587
+  smtp_usuario: ""
+  smtp_senha: ""
+
+cotacao:
+  ativo: true
+  url_cempre: "https://cempre.org.br/cempre-informa/precos-do-mercado/"
+  atualizar_intervalo_min: 30
+  alerta_alta_pct: 10
+  alerta_baixa_pct: 15
+  # precos_manuais: usados como fallback quando o scraper nao acha o material.
+  precos_manuais: {}
+
+esg:
+  emitir_certificado: true
+  validade_dias: 365
+  logo_cooperativa: ""
+  limite_rejeito_pct: 10
+
+api:
+  porta: 5000
+  host: "0.0.0.0"
+  # token_gestor: gerado pelo setup.sh. Vazio = sem auth (dev local).
+  token_gestor: ""
+
+interface:
+  idioma: "pt-BR"
+  tema: "escuro"
+  fonte_tamanho: 28
+  alto_contraste: false
+  limite_verificar: 0.70
+  limite_incerto: 0.50
+
+privacidade:
+  envio_externo: false
+  aviso_coleta: true
+  retencao_frames_dias: 30
+  retencao_relatorios_dias: 365
+
+dados:
+  pasta_frames: dados/frames
+  pasta_relatorios: dados/relatorios
+  pasta_certificados: dados/certificados
+  pasta_modelos: dados/modelos
+  pasta_db: dados/db
+  salvar_todos_frames: false
+  salvar_apenas_baixa_confianca: true
+  limite_baixa_confianca: 0.65
