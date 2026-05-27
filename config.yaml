@@ -11,10 +11,14 @@ camera:
   fps_alvo: 10
 
 modelo:
-  caminho: dados/modelos/yolov8n.pt
+  caminho: dados/modelos/yolov8n_residuos.pt
   caminho_base: dados/modelos/yolov8n.pt
   confianca_minima: 0.50
   iou_threshold: 0.45
+  # Otimizacao Pi 5: ONNX INT8 em 320x320 (3-4x mais rapido que .pt em CPU)
+  usar_onnx: true
+  caminho_onnx: dados/modelos/yolov8n_residuos_int8.onnx
+  imgsz: 320
   usar_onnx: false
   caminho_onnx: dados/modelos/yolov8n_residuos.onnx
 

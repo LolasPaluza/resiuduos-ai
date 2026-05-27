@@ -61,13 +61,16 @@ def construir_camera(cfg: dict, demo: Optional[str]) -> Camera:
 
 def construir_modelo(cfg: dict) -> Modelo:
     perfil = detectar_hardware()
+    # Permite override do imgsz via config (otimizacao de performance).
+    # Se nao definido, usa o perfil do hardware (Pi 3=320, 4=416, 5=640).
+    imgsz = int(cfg["modelo"].get("imgsz") or perfil.resolucao_inferencia)
     modelo = Modelo(
         caminho=cfg["modelo"]["caminho"],
         confianca_minima=cfg["modelo"]["confianca_minima"],
         iou_threshold=cfg["modelo"]["iou_threshold"],
         usar_onnx=cfg["modelo"].get("usar_onnx", False),
         caminho_onnx=cfg["modelo"].get("caminho_onnx"),
-        imgsz=perfil.resolucao_inferencia,
+        imgsz=imgsz,
     )
     modelo.carregar()
     return modelo
