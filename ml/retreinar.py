@@ -37,24 +37,40 @@ def juntar_frames_locais(pasta_frames: Path, data_yaml: Path) -> int:
 
 
 def treinar(data_yaml: Path, epochs: int, imgsz: int,
-            modelo_base: str, saida: Path) -> Path:
+            modelo_base: str, saida: Path,
+            resume: bool = False) -> Path:
+    """Treina YOLOv8. Suporta resume de checkpoint last.pt anterior.
+
+    - save_period=1: salva checkpoint a cada epoch (resiliencia a crash/sleep)
+    - patience=20: early stopping se nao melhorar em 20 epochs
+    """
     from ultralytics import YOLO
-    log.info("Iniciando treino: base=%s epochs=%s imgsz=%s",
-             modelo_base, epochs, imgsz)
-    modelo = YOLO(modelo_base)
-    # Ultralytics usa caminhos absolutos para project/name; usamos absolutos
-    # para evitar que ele combine com seu cwd default (runs/detect/...).
     saida_abs = saida.resolve()
     saida_abs.parent.mkdir(parents=True, exist_ok=True)
-    modelo.train(
-        data=str(data_yaml.resolve()),
-        epochs=epochs,
-        imgsz=imgsz,
-        batch=8,
-        project=str(saida_abs.parent),
-        name=saida_abs.name,
-        exist_ok=True,
-    )
+    last_pt = saida_abs / "weights" / "last.pt"
+
+    # Resume automatico se last.pt existir e resume=True
+    if resume and last_pt.exists():
+        log.info("Retomando treino de %s", last_pt)
+        modelo = YOLO(str(last_pt))
+        train_kwargs = {"resume": True}
+    else:
+        log.info("Iniciando treino: base=%s epochs=%s imgsz=%s",
+                 modelo_base, epochs, imgsz)
+        modelo = YOLO(modelo_base)
+        train_kwargs = {
+            "data": str(data_yaml.resolve()),
+            "epochs": epochs,
+            "imgsz": imgsz,
+            "batch": 8,
+            "project": str(saida_abs.parent),
+            "name": saida_abs.name,
+            "exist_ok": True,
+            "save_period": 1,   # checkpoint a cada epoch
+            "patience": 20,     # early stopping
+        }
+
+    modelo.train(**train_kwargs)
     best = saida_abs / "weights" / "best.pt"
     log.info("Treino concluido. Melhor modelo: %s", best)
     return best
@@ -70,6 +86,8 @@ def principal():
                         default=Path("dados/frames"))
     parser.add_argument("--saida", type=Path,
                         default=Path("dados/modelos/runs/finetune"))
+    parser.add_argument("--resume", action="store_true",
+                        help="Retoma do ultimo checkpoint (last.pt) se existir.")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
@@ -82,7 +100,8 @@ def principal():
         return
 
     juntar_frames_locais(args.frames_locais, args.data)
-    best = treinar(args.data, args.epochs, args.imgsz, args.base, args.saida)
+    best = treinar(args.data, args.epochs, args.imgsz, args.base, args.saida,
+                   resume=args.resume)
 
     # Copia o melhor modelo para o local padrao usado em producao.
     destino = Path("dados/modelos/yolov8n_residuos.pt")

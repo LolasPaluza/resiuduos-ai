@@ -41,6 +41,18 @@ MAP_HTL = {
     "PLASTIC":       "PEAD",       # plastic generico vai pra PEAD (rigido)
 }
 
+# kamolchai_sacos: 2 classes (HDPE e LDPE) -> ambos viram PEAD pra reforcar
+# detecção de sacos/filmes plasticos.
+MAP_KAMOLCHAI = {
+    "HDPE Plastic": "PEAD",
+    "LDPE":         "PEAD",
+}
+
+# miasds_sacos: 1 classe (plastic-bag) -> PEAD
+MAP_MIASDS = {
+    "plastic-bag": "PEAD",
+}
+
 
 def preparar_roboflow(
     origem: Path,
@@ -104,6 +116,8 @@ def principal():
     parser.add_argument("--taco", type=Path, default=Path("dados/datasets/TACO"))
     parser.add_argument("--ecosift", type=Path, default=Path("dados/datasets/ecosift"))
     parser.add_argument("--htl", type=Path, default=Path("dados/datasets/htl"))
+    parser.add_argument("--kamolchai", type=Path, default=Path("dados/datasets/kamolchai_sacos"))
+    parser.add_argument("--miasds", type=Path, default=Path("dados/datasets/miasds_sacos"))
     parser.add_argument("--split", type=float, default=0.85)
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
@@ -126,6 +140,16 @@ def principal():
         args.htl, args.saida,
         ["BIODEGRADABLE", "CARDBOARD", "GLASS", "METAL", "PAPER", "PLASTIC"],
         MAP_HTL, "htl",
+    )
+    total += preparar_roboflow(
+        args.kamolchai, args.saida,
+        ["HDPE Plastic", "LDPE"],
+        MAP_KAMOLCHAI, "kamol",
+    )
+    total += preparar_roboflow(
+        args.miasds, args.saida,
+        ["plastic-bag"],
+        MAP_MIASDS, "miasds",
     )
 
     escrever_data_yaml(args.saida)
