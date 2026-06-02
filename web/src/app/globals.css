@@ -1,26 +1,190 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+  /* Neutros — ReciclaIA dark */
+  --bg: #0a0c0a;
+  --bg-soft: #0d100c;
+  --surface: #11140f;
+  --surface-2: #161a13;
+  --surface-3: #1c2118;
+  --border: rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --text: #ecefe8;
+  --text-dim: #a4ad9d;
+  --text-mute: #6b7367;
+
+  /* Acentos */
+  --green: #19e27e;
+  --green-dim: #0e9b56;
+  --green-glow: rgba(25, 226, 126, 0.18);
+  --red: #ef4444;
+  --amber: #f59e0b;
+  --blue: #3b82f6;
+  --yellow: #eab308;
+  --purple: #a855f7;
+  --gray: #94a3b8;
+
+  /* Cores por material */
+  --c-pet: #6bb6ff;
+  --c-pead: #ff9a55;
+  --c-papel: #f5d166;
+  --c-metal: #b9c0c7;
+  --c-org: #19e27e;
+  --c-rej: #ef4444;
+
+  /* Tipografia */
+  --font-sans: var(--font-geist-sans), Geist, Inter, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), "Geist Mono", "JetBrains Mono",
+    ui-monospace, monospace;
+
+  /* Espaços */
+  --section-py: clamp(72px, 9vw, 140px);
+  --gutter: clamp(24px, 4vw, 56px);
+  --max-w: 1240px;
+
+  /* Raios */
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 22px;
+  --r-xl: 28px;
+
+  /* Compat com Tailwind */
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
 }
 
-/* Pequena animação de pulso para indicador de "ao vivo". */
-@keyframes ping-soft {
-  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-  100% { box-shadow: 0 0 0 14px rgba(16, 185, 129, 0); }
+body {
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01" 1, "cv11" 1;
+  position: relative;
 }
-.live-dot { animation: ping-soft 1.6s ease-out infinite; }
+
+/* Grade de pontos decorativa do fundo */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(255, 255, 255, 0.04) 1px,
+    transparent 0
+  );
+  background-size: 28px 28px;
+  mask-image: radial-gradient(
+    ellipse 80% 60% at 50% 0%,
+    black 40%,
+    transparent 80%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Tipografia title */
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+  letter-spacing: -0.03em;
+}
+h1 {
+  letter-spacing: -0.035em;
+}
+p {
+  text-wrap: pretty;
+}
+
+/* Animações landing */
+@keyframes brandPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(25, 226, 126, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(25, 226, 126, 0);
+  }
+}
+.brand-dot {
+  animation: brandPulse 2.2s ease-out infinite;
+}
+
+@keyframes beltMove {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -32px 0;
+  }
+}
+.belt-anim {
+  animation: beltMove 1.4s linear infinite;
+}
+
+@keyframes bboxBreath {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 0.85;
+  }
+}
+.bbox-anim {
+  animation: bboxBreath 2s ease-in-out infinite;
+}
+
+@keyframes ringPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(25, 226, 126, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 0 18px rgba(25, 226, 126, 0);
+  }
+}
+.pulse-ring {
+  animation: ringPulse 1.8s ease-out infinite;
+}
+
+@keyframes ping-soft {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 0 14px rgba(16, 185, 129, 0);
+  }
+}
+.live-dot {
+  animation: ping-soft 1.6s ease-out infinite;
+}
+
+/* Reveal animations (entrada na viewport) */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s ease;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Scroll suave nos ancoras */
+html {
+  scroll-behavior: smooth;
+}

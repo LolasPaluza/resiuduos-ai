@@ -4,13 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const NAV = [
-  { href: "/", label: "Dashboard", icon: "▦" },
-  { href: "/turno", label: "Turno ao vivo", icon: "▶" },
-  { href: "/historico", label: "Histórico", icon: "≡" },
-  { href: "/certificados", label: "Certificados ESG", icon: "✓" },
-  { href: "/cotacao", label: "Cotação", icon: "R$" },
-  { href: "/sobre", label: "Princípios", icon: "♥" },
-  { href: "/configuracao", label: "Configuração", icon: "⚙" },
+  { href: "/painel", label: "Dashboard", icon: "▦" },
+  { href: "/painel/turno", label: "Turno ao vivo", icon: "▶" },
+  { href: "/painel/historico", label: "Histórico", icon: "≡" },
+  { href: "/painel/certificados", label: "Certificados ESG", icon: "✓" },
+  { href: "/painel/cotacao", label: "Cotação", icon: "R$" },
+  { href: "/painel/sobre", label: "Princípios", icon: "♥" },
+  { href: "/painel/configuracao", label: "Configuração", icon: "⚙" },
 ];
 
 export function Sidebar() {
@@ -18,20 +18,20 @@ export function Sidebar() {
   return (
     <aside className="hidden md:flex md:flex-col md:w-64 bg-zinc-900 text-zinc-100 border-r border-zinc-800 min-h-screen">
       <div className="px-6 py-6 border-b border-zinc-800">
-        <div className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition">
           <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center font-bold text-lg">
             ♻
           </div>
           <div>
-            <div className="font-bold leading-tight">Resíduos AI</div>
-            <div className="text-xs text-zinc-400">Cooperativa</div>
+            <div className="font-bold leading-tight">ReciclaIA</div>
+            <div className="text-xs text-zinc-400">Painel cooperativa</div>
           </div>
-        </div>
+        </Link>
       </div>
       <nav className="flex-1 py-4">
         {NAV.map((item) => {
           const active =
-            item.href === "/" ? path === "/" : path.startsWith(item.href);
+            item.href === "/painel" ? path === "/painel" : path.startsWith(item.href);
           return (
             <Link
               key={item.href}
