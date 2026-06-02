@@ -9,6 +9,7 @@ const NAV = [
   { href: "/historico", label: "Histórico", icon: "≡" },
   { href: "/certificados", label: "Certificados ESG", icon: "✓" },
   { href: "/cotacao", label: "Cotação", icon: "R$" },
+  { href: "/sobre", label: "Princípios", icon: "♥" },
   { href: "/configuracao", label: "Configuração", icon: "⚙" },
 ];
 
