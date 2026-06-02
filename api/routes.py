@@ -82,6 +82,35 @@ def criar_app(
             pass
         return jsonify(info)
 
+    @app.get("/health")
+    def health():
+        """Metricas de saude do hardware (publico — sem token).
+
+        Permite ao gestor monitorar o Pi remotamente sem credenciais
+        sensiveis (so info operacional, nada de dados de turno).
+        """
+        from core.saude import coletar
+        return jsonify(coletar(pasta_dados))
+
+    @app.post("/gestor/login")
+    def gestor_login():
+        """Login com PIN curto pra modo gestor.
+
+        Devolve o token de gestor (mesmo do Bearer). Util pra dashboards
+        que querem subir privilegios sem o gestor digitar 64 chars.
+        Body: {"pin": "1234"}
+        """
+        body = request.get_json(silent=True) or {}
+        pin = str(body.get("pin", ""))
+        cfg = _ler_config(config_path) if config_path else {}
+        pin_esperado = str(cfg.get("api", {}).get("pin_gestor", ""))
+        if not pin_esperado:
+            return jsonify({"erro": "modo gestor desativado"}), 503
+        import hmac as _hmac
+        if not _hmac.compare_digest(pin, pin_esperado):
+            return jsonify({"erro": "PIN invalido"}), 401
+        return jsonify({"ok": True, "token": token_gestor})
+
     @app.get("/certificados/<hash_cert>/verificar")
     def verificar_certificado(hash_cert):
         """Verificacao publica (sem auth) — usada por QR Code do PDF."""

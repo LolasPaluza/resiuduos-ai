@@ -63,6 +63,9 @@ api:
   host: "0.0.0.0"
   # token_gestor: gerado pelo setup.sh. Vazio = sem auth (dev local).
   token_gestor: ""
+  # PIN de 4 digitos para modo gestor no dashboard local (tecla * + PIN).
+  # Vazio = modo gestor desativado.
+  pin_gestor: "0000"
 
 interface:
   idioma: "pt-BR"

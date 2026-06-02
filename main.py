@@ -31,15 +31,32 @@ from ui.dashboard import Dashboard
 
 
 def configurar_log(pasta: Path) -> None:
+    """Loga em sistema.log com rotacao diaria. Mantem 7 dias.
+
+    Evita disco cheio em producao 24/7. O arquivo do dia atual e
+    sistema.log; do dia anterior, sistema.log.2026-05-27, etc.
+    """
+    from logging.handlers import TimedRotatingFileHandler
     pasta.mkdir(parents=True, exist_ok=True)
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
-        handlers=[
-            logging.FileHandler(pasta / "sistema.log", encoding="utf-8"),
-            logging.StreamHandler(),
-        ],
+    fmt = logging.Formatter(
+        "%(asctime)s %(levelname)s %(name)s: %(message)s",
     )
+    handler_arquivo = TimedRotatingFileHandler(
+        pasta / "sistema.log",
+        when="midnight",
+        backupCount=7,
+        encoding="utf-8",
+    )
+    handler_arquivo.setFormatter(fmt)
+    handler_console = logging.StreamHandler()
+    handler_console.setFormatter(fmt)
+    root = logging.getLogger()
+    root.setLevel(logging.INFO)
+    # Limpa handlers existentes (evita duplicacao em reload)
+    for h in root.handlers[:]:
+        root.removeHandler(h)
+    root.addHandler(handler_arquivo)
+    root.addHandler(handler_console)
 
 
 def carregar_config(caminho: Path) -> dict:

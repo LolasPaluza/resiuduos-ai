@@ -137,12 +137,34 @@ class Camera:
         return frame
 
     def frames(self):
-        """Gerador infinito de frames. Encerra apenas se a camera nao reconectar."""
+        """Gerador infinito de frames. Em vez de encerrar quando a camera
+        cai, espera e tenta reconectar continuamente — produz \\x00 (None
+        sentinel) pra quem consome saber que houve perda mas continua.
+
+        Sistema em producao 24/7 nao deve morrer porque o cabo soltou
+        por 3 segundos.
+        """
+        falhas_consecutivas = 0
         while True:
             frame = self.ler_frame()
             if frame is None:
-                log.error("Camera indisponivel, encerrando gerador.")
-                break
+                falhas_consecutivas += 1
+                log.warning(
+                    "Frame perdido (%d consecutivas). Aguardando 5s antes de tentar de novo...",
+                    falhas_consecutivas,
+                )
+                time.sleep(5)
+                # Reset completo dos tentativas pra recomecar do zero
+                self._cap = None
+                if falhas_consecutivas >= 12:  # 12 * 5s = 1 minuto
+                    log.error(
+                        "Camera totalmente indisponivel ha mais de 1 minuto. "
+                        "Continuando a tentar — sistema entrara em modo degradado "
+                        "automaticamente se outra parte detectar a queda.",
+                    )
+                    falhas_consecutivas = 0  # reseta pra nao spammar log
+                continue
+            falhas_consecutivas = 0
             yield frame
 
 
