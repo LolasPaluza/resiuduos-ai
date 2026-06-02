@@ -139,6 +139,10 @@ class GerenciadorTurno:
         if self._turno is None:
             return
         with self._lock:
+            # Re-check dentro do lock: turno pode ter sido encerrado entre
+            # o check inicial e a aquisicao do lock (race condition).
+            if self._turno is None:
+                return
             self._turno.total_frames += 1
             vistos_track = set(self._turno.track_ids_vistos)
             agora = time.time()
